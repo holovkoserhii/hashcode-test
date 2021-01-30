@@ -1,6 +1,6 @@
-import serhiiFn from './players/serhii'
-import oleksandrFn from './players/oleksandr'
-import maksymFn from './players/maksym'
+import serhiiFn from "./players/serhii";
+import oleksandrFn from "./players/oleksandr";
+import maksymFn from "./players/maksym";
 
 /*
 String:
@@ -21,22 +21,3 @@ Transform to multiple string lines:
 T 14
 ...`
 */
-
-type Days = 'M' | 'T' | 'W'
-
-interface player1out {
-    lines: number
-    averageNumber: number
-    averageNumberPerLine: number[]
-}
-
-interface player2out {
-    averageNumberPerLine: number
-    lisumOfOtherTwones: number
-    day: Days
-}[]
-
-type player3out = {
-[K in Days]: number
-// to string
-}
