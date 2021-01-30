@@ -36,8 +36,7 @@ interface player2out {
     day: Days
 }[]
 
-interface player3out {
+type player3out = {
+[K in Days]: number
 // to string
-M: number
-// ...
 }
