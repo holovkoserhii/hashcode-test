@@ -1,5 +1,4 @@
-type Days = "M" | "T" | "W";
-
+export type Days = "M" | "T" | "W";
 export interface player1out {
   lines: number;
   averageNumber: number;
