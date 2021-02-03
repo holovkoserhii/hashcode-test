@@ -15,7 +15,25 @@ import * as _ from "lodash";
 6. If necessary, create additional helper functions within your file.
 7. MAKE SURE TO MAKE CHANGES ONLY WITHIN THIS FOLDER.
 */
-
-export const function1: (person: number) => string = (person: number) => {
-    return '5'
+interface obj {
+  time: number;
+  price: number;
 }
+interface p12 {
+  timeAvailable: number;
+  materials: obj[];
+}
+
+export const function1: (materials: string) => p12 = (material: string) => {
+  const rawArray = material.trim().split(/\r?\n/);
+  const timeAvailable = +rawArray.shift();
+  rawArray.shift();
+  const materials = rawArray.reduce((accum, currentMaterial) => {
+    const [t, p] = currentMaterial.trim().split(" ");
+    const time = Number(t);
+    const price = Number(p);
+    return [{ time, price }];
+  }, []);
+
+  return { timeAvailable, materials };
+};
