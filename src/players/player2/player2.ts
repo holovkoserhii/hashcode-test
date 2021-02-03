@@ -16,6 +16,44 @@ import * as _ from "lodash";
 7. MAKE SURE TO MAKE CHANGES ONLY WITHIN THIS FOLDER.
 */
 
-export const function2: (name: string) => number = (name: string) => {
-    return 5
+interface obj {
+    time: number
+    price: number
 }
+ 
+interface p12 {
+    timeAvailable: number,
+    materials: obj[]
+}
+
+interface p23 {
+    materials: number[]
+}
+
+// const mockedData = {
+//     timeAvailable: 44,
+//     materials: [{
+//         time: 5, price: 8
+//     }, {
+//         time: 7, price: 10
+//     }]
+// }
+
+export const function2: (data: p12) => p23 = (data: p12) => {
+    console.log('mockedData');
+    // console.log(data);
+
+    const efficiencies = data.materials.map(el => _.divide(el.price, el.time))
+    // console.log(efficiencies);
+    
+    const products = efficiencies.map(el => _.divide(el, _.max(efficiencies))).map(el => _.round(el, 3) === 1).map((el, index) => {
+        if (!el) return 0
+        return _.floor(_.divide(data.timeAvailable, data.materials[index].time))
+    });
+    
+    return {
+        materials: products
+    }
+}
+
+// function2(mockedData)
