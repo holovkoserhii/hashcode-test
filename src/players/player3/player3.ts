@@ -13,7 +13,7 @@ import * as _ from "lodash";
 4. Run via npm start, open http://localhost:9000/
 5. Make changes incrementally, check results via console.log.
 6. If necessary, create additional helper functions within your file.
-7. MAKE SURE TO MAKE CHANGES ONLY WITHIN THIS FILE.
+7. MAKE SURE TO MAKE CHANGES ONLY WITHIN THIS FOLDER.
 */
 
-export const function2: (name: string) => string = (name: string) => `I am ${name}`
+export const function3: (phrase: string) => number = (phrase: string) => {}
