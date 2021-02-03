@@ -4,10 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "yarn run clear-dist && webpack --mode development",
-    "build": "yarn run clear-dist && webpack --mode production",
+    "dev": "npm run clear-dist && webpack --mode development",
+    "build": "npm run clear-dist && webpack --mode production",
     "clear-dist": "rm -r -f dist",
-    "start": "yarn run clear-dist && webpack-dev-server --mode development"
+    "start": "npm run clear-dist && webpack-dev-server --mode development"
   },
   "devDependencies": {
     "@babel/core": "^7.7.7",

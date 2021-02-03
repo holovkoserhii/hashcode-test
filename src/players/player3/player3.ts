@@ -16,4 +16,6 @@ import * as _ from "lodash";
 7. MAKE SURE TO MAKE CHANGES ONLY WITHIN THIS FOLDER.
 */
 
-export const function3: (phrase: string) => number = (phrase: string) => {}
+export const function3: (phrase: string) => number = (phrase: string) => {
+    return 5
+}
