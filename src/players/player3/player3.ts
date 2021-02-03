@@ -1,5 +1,7 @@
 import * as _ from "lodash";
 
+import { ChosenProducts } from './interface';
+
 // console.log('lodash check');
 // console.log(_.isEmpty([1, 2, 3])); // false
 // console.log(_.isEmpty([])); // true
@@ -16,6 +18,21 @@ import * as _ from "lodash";
 7. MAKE SURE TO MAKE CHANGES ONLY WITHIN THIS FOLDER.
 */
 
-export const function3: (phrase: string) => number = (phrase: string) => {
-    return 5
-}
+const mockedInput: ChosenProducts = {
+    materials: [5, 10]
+};
+const paperCost = 9;
+const plasticCost = 11;
+
+export const function3 = (data: ChosenProducts): string => {
+    const temp = data.materials.reduce( (acc, el, _i) => _i === 0
+        ? acc + el*paperCost
+        : acc + el*plasticCost
+    , 0);
+    const materialsResult = data.materials.join(' ');
+    
+    return `
+        ${temp}
+        ${materialsResult}
+    `
+};
