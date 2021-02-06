@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 
-import { ChosenProducts } from './interface';
+import { player1out, player2out } from './interface';
 
 // console.log('lodash check');
 // console.log(_.isEmpty([1, 2, 3])); // false
@@ -18,21 +18,82 @@ import { ChosenProducts } from './interface';
 7. MAKE SURE TO MAKE CHANGES ONLY WITHIN THIS FOLDER.
 */
 
-const mockedInput: ChosenProducts = {
-    materials: [5, 10]
-};
-const paperCost = 9;
-const plasticCost = 11;
+const sortPizzas = (pizzas: any, updatedArr: any, maxPizza: any): any => {
+  const mostSaturatedPizza = {
+    index: 0,
+    pizza: maxPizza
+  };
+  let actions = 0;
 
-export const function3 = (data: ChosenProducts): string => {
-    const temp = data.materials.reduce( (acc, el, _i) => _i === 0
-        ? acc + el*paperCost
-        : acc + el*plasticCost
-    , 0);
-    const materialsResult = data.materials.join(' ');
-    
-    return `
-        ${temp}
-        ${materialsResult}
-    `
+  for (let i=0; i<pizzas.length; i++) {
+
+    if (pizzas[i].ingredients.length >= mostSaturatedPizza.pizza.ingredients.length) {
+      mostSaturatedPizza.pizza = pizzas[i];
+      mostSaturatedPizza.index = i;
+      actions++;
+      console.log('TRIGGERED')
+    }
+  }
+
+  if (actions > 0) {
+    updatedArr.push(mostSaturatedPizza.pizza);
+  }
+  pizzas.splice(mostSaturatedPizza.index, 1);
+
+  return actions === 0 
+    ? updatedArr
+    : sortPizzas(pizzas, updatedArr, mostSaturatedPizza.pizza)
+}
+
+const findMaxSaturatedPizzas = (pizzas: any, maxPizza: any): any => {
+  const mostSaturatedPizza = {
+    index: 0,
+    pizza: maxPizza
+  };
+
+  for (let i=0; i<pizzas.length; i++) {
+
+    if (pizzas[i].ingredients.length >= mostSaturatedPizza.pizza.ingredients.length) {
+      mostSaturatedPizza.pizza = pizzas[i];
+      mostSaturatedPizza.index = i;
+    }
+  }
+  pizzas.splice(mostSaturatedPizza.index, 1);
+
+  return {
+    filteredpizzas: pizzas,
+    maxPizza: mostSaturatedPizza.pizza
+  }
+}
+
+
+export const function3 = (data: player1out): player2out => {
+  console.log(data)
+  let { teamOf2Number, teamOf3Number, teamOf4Number, pizzas } = data;
+
+  const {filteredpizzas, maxPizza} = findMaxSaturatedPizzas(pizzas, pizzas[0]);
+
+  const arr = sortPizzas(filteredpizzas, [], maxPizza);
+  const { filteredpizzas: resultPizzas} = arr;
+  // resultPizzas.reverse();
+  console.log(arr)
+  // arr.filteredpizzas.map( (item: any) => console.log(item) )
+
+
+  return {
+    orders: [
+      {
+        teamOf: teamOf2Number,
+        pizzaIds: resultPizzas.splice(0, teamOf2Number)
+      },
+      {
+        teamOf: teamOf3Number,
+        pizzaIds: resultPizzas.splice(0, teamOf3Number)
+      },
+      {
+        teamOf: teamOf4Number,
+        pizzaIds: resultPizzas.splice(0, teamOf4Number)
+      },
+    ]
+  }
 };
