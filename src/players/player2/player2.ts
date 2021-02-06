@@ -29,20 +29,6 @@ interface player1out {
   pizzasCount: number;
 }
 
-const mockData: player1out = {
-  teamOf2Number: 1,
-  teamOf3Number: 2,
-  teamOf4Number: 1,
-  pizzas: [
-    { id: 0, ingredients: ["onion", "pepper", "olive"] },
-    { id: 1, ingredients: ["mushroom", "tomato", "basil"] },
-    { id: 2, ingredients: ["chicken", "mushroom", "pepper"] },
-    { id: 3, ingredients: ["tomato", "mushroom", "basil"] },
-    { id: 4, ingredients: ["chicken", "basil"] },
-  ],
-  pizzasCount: 5,
-};
-
 interface Order {
   teamOf: number;
   pizzaIds: number[];
@@ -52,7 +38,9 @@ interface player2out {
   orders: Order[];
 }
 
-export const function2: (data: player1out) => any = (data: player1out) => {
+export const function2: (data: player1out) => player2out = (
+  data: player1out
+) => {
   const {
     teamOf2Number,
     teamOf3Number,
@@ -60,16 +48,13 @@ export const function2: (data: player1out) => any = (data: player1out) => {
     pizzas,
     pizzasCount,
   } = data;
-  const usedPizzaIds: number[] = [];
+  let usedPizzaIds: number[] = [];
   const teams: { [key: string]: number } = {
     2: teamOf2Number,
     3: teamOf3Number,
     4: teamOf4Number,
   };
-  //   const order: Order = {
-  //     teamOf: null,
-  //     pizzaIds: null,
-  //   };
+
   const result: player2out = { orders: [] };
 
   const orders = [];
@@ -78,14 +63,13 @@ export const function2: (data: player1out) => any = (data: player1out) => {
       orders.push(Number(key));
     }
   }
-  //   console.log(orders, "ORDERS");
 
-  for (let pizzaCount of orders) {
-    // for each order
-    const pizzaIds = [];
+  for (let ordersCount of orders) {
+    // for each order * optimise by reverting orders
+    const pizzaIds: number[] = [];
     const pizzaIngredientsUsed: string[] = [];
-    if (pizzaCount <= pizzasCount - usedPizzaIds.length) {
-      for (let user = 1; user <= pizzaCount; user++) {
+    if (ordersCount <= pizzasCount - usedPizzaIds.length) {
+      for (let user = 1; user <= ordersCount; user++) {
         let userHasHisPizza = false;
         // Get pizza for each user
         for (const pizza of pizzas) {
@@ -94,7 +78,7 @@ export const function2: (data: player1out) => any = (data: player1out) => {
             continue;
           }
           const uniqueIngridient = pizza.ingredients.find(
-            // *
+            // * we can try filter by more ingridients
             (ingredient) => !pizzaIngredientsUsed.includes(ingredient)
           );
           if (uniqueIngridient && !userHasHisPizza) {
@@ -102,20 +86,44 @@ export const function2: (data: player1out) => any = (data: player1out) => {
             userHasHisPizza = true;
             usedPizzaIds.push(pizza.id);
             pizzaIds.push(pizza.id);
-            // console.log(pizzaIngredientsUsed, "INGRIDIENTS");
+            break;
+          } else if (
+            !userHasHisPizza &&
+            pizzasCount - usedPizzaIds.length <= ordersCount
+          ) {
+            pizzaIngredientsUsed.push(...pizza.ingredients);
+            userHasHisPizza = true;
+            usedPizzaIds.push(pizza.id);
+            pizzaIds.push(pizza.id);
             break;
           }
         }
       }
     }
-    if (!_.isEmpty(pizzaIds) && pizzaIds.length === pizzaCount) {
-      result.orders.push({ pizzaIds, teamOf: pizzaCount });
+
+    const isPizzaIds = !_.isEmpty(pizzaIds);
+    if (isPizzaIds && pizzaIds.length === ordersCount) {
+      result.orders.push({ pizzaIds, teamOf: ordersCount });
+    } else if (isPizzaIds) {
+      usedPizzaIds = usedPizzaIds.filter((id) => !pizzaIds.includes(id));
     }
   }
-
-//   console.log(result);
 
   return result;
 };
 
-function2(mockData);
+// const mockData: player1out = {
+//   teamOf2Number: 1,
+//   teamOf3Number: 2,
+//   teamOf4Number: 1,
+//   pizzas: [
+//     { id: 0, ingredients: ["onion", "pepper", "olive"] },
+//     { id: 1, ingredients: ["mushroom", "tomato", "basil"] },
+//     { id: 2, ingredients: ["chicken", "mushroom", "pepper"] },
+//     { id: 3, ingredients: ["tomato", "mushroom", "basil"] },
+//     { id: 4, ingredients: ["chicken", "basil"] },
+//   ],
+//   pizzasCount: 5,
+// };
+
+// function2(mockData);
