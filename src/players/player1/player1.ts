@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 import { isEmpty } from "lodash";
-import {readFromFile} from "../../utils/index";
+import { readFromFile, writeToFile } from "../../utils/index";
+import { function2 } from "../player2/player2";
 
 // console.log('lodash check');
 // console.log(_.isEmpty([1, 2, 3])); // false
@@ -17,6 +18,20 @@ import {readFromFile} from "../../utils/index";
   6. If necessary, create additional helper functions within your file.
   7. MAKE SURE TO MAKE CHANGES ONLY WITHIN THIS FOLDER.
   */
+
+ const pizzasMocked = {
+  teamOf2Number: 1,
+  teamOf3Number: 2,
+  teamOf4Number: 1,
+  pizzas: [
+    { id: 0, ingredients: ["onion", "pepper", "olive"] },
+    { id: 1, ingredients: ["mushroom", "tomato", "basil"] },
+    { id: 2, ingredients: ["chicken", "mushroom", "pepper"] },
+    { id: 3, ingredients: ["tomato", "mushroom", "basil"] },
+    { id: 4, ingredients: ["chicken", "basil"] },
+  ],
+  pizzasCount: 5,
+};
 
   const i1File = 'https://raw.githubusercontent.com/holovkoserhii/hashcode-test/main/src/inputs/a_example.txt';
   const i2File = 'https://raw.githubusercontent.com/holovkoserhii/hashcode-test/main/src/inputs/b_little_bit_of_everything.txt';
@@ -37,6 +52,30 @@ interface player1out {
   pizzasCount: number
 }
 
+interface Order {
+  teamOf: number
+  pizzaIds: number[]
+}
+
+interface player2out {
+  orders: Order[]
+}
+
+const calculatePoints: (data: player2out, pizzas: player1out) => number = (data, pizzas) => {
+  const orders = data.orders
+  const points = orders.map(order => {
+    const ingredients = order.pizzaIds.map(id => pizzas.pizzas.find(pizzaItem => {
+      
+      return pizzaItem.id === id
+    }).ingredients)
+    
+    return Math.pow(_.uniq(_.flattenDeep(ingredients)).length, 2)
+    
+    
+  })
+  return _.sum(points);
+}
+
 const inputString = readFromFile(i1File) // switch between different files
 
 export const function1: (inputString: string) => player1out = (inputString: string) => {
@@ -53,6 +92,35 @@ export const function1: (inputString: string) => player1out = (inputString: stri
     teamOf4Number: Number(splittedString[0][3]),
     pizzas
   }
-
+// writeToFile(omposeFinalString(function2(result)), 'player2Result')
+// writeToFile(omposeFinalString(function3(result)), 'player3Result')
+  // console.log('player2 points: ', calculatePoints(function2(result)), result));
+  // console.log('player3 points: ', calculatePoints(function3(result)), result));
   return result
 };
+
+
+
+const mockedData = {
+  orders: [
+    {
+      teamOf: 2,
+      pizzaIds: [1, 4]
+    },
+    {
+      teamOf: 3,
+      pizzaIds: [0, 2, 3]
+    },
+  ],
+}
+
+const composeFinalString: (data: player2out) => string = (data) => {
+  let result = `${data.orders.length}\n`
+  console.log(result);
+  data.orders.forEach((element) => {
+    result += `${element.teamOf} ${element.pizzaIds.join(' ')}\n`
+  })
+  return result
+}
+
+writeToFile(composeFinalString(mockedData), '1')
