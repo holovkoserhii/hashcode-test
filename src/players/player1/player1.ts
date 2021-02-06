@@ -1,4 +1,7 @@
 import * as _ from "lodash";
+import { isEmpty } from "lodash";
+import {readFromFile} from "../../utils/index";
+
 // console.log('lodash check');
 // console.log(_.isEmpty([1, 2, 3])); // false
 // console.log(_.isEmpty([])); // true
@@ -14,32 +17,42 @@ import * as _ from "lodash";
   6. If necessary, create additional helper functions within your file.
   7. MAKE SURE TO MAKE CHANGES ONLY WITHIN THIS FOLDER.
   */
-interface obj {
-  time: number;
-  price: number;
+
+  const i1File = 'https://raw.githubusercontent.com/holovkoserhii/hashcode-test/main/src/inputs/a_example.txt';
+  const i2File = 'https://raw.githubusercontent.com/holovkoserhii/hashcode-test/main/src/inputs/b_little_bit_of_everything.txt';
+  const i3File = 'https://raw.githubusercontent.com/holovkoserhii/hashcode-test/main/src/inputs/c_many_ingredients.txt';
+  const i4File = 'https://raw.githubusercontent.com/holovkoserhii/hashcode-test/main/src/inputs/d_many_pizzas.txt';
+  const i5File = 'https://raw.githubusercontent.com/holovkoserhii/hashcode-test/main/src/inputs/e_many_teams.txt';
+
+ interface Pizza {
+  id: number
+  ingredients: string[]
 }
-interface p12 {
-  timeAvailable: number;
-  materials: obj[];
+
+interface player1out {
+  teamOf2Number: number
+  teamOf3Number: number
+  teamOf4Number: number
+  pizzas: Pizza[]
+  pizzasCount: number
 }
 
-const rawMaterials = `
-  100
-  2
-  5 9
-  7 11
-  `;
+const inputString = readFromFile(i1File) // switch between different files
 
-export const function1: (materials: string) => p12 = (material: string) => {
-  const rawArray = material.trim().split(/\r?\n/);
-  const timeAvailable = +rawArray.shift();
-  rawArray.shift();
-  const materials = rawArray.reduce((accum, currentMaterial) => {
-    const [t, p] = currentMaterial.trim().split(" ");
-    const time = Number(t);
-    const price = Number(p);
-    return [...accum, { time, price }];
-  }, []);
+export const function1: (inputString: string) => player1out = (inputString: string) => {
+  const splittedString = inputString.split('\n').map(el => _.compact(el.split(' '))).filter(el => !_.isEmpty(el));
+  const pizzas = splittedString.map(([_, ...ingredients], id) => ({
+      id: id - 1,
+      ingredients
+    })
+  )
+  const result = {
+    pizzasCount: Number(splittedString[0][0]),
+    teamOf2Number: Number(splittedString[0][1]),
+    teamOf3Number: Number(splittedString[0][2]),
+    teamOf4Number: Number(splittedString[0][3]),
+    pizzas
+  }
 
-  return { timeAvailable, materials };
+  return result
 };
