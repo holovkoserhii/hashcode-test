@@ -49,27 +49,21 @@ export const function2: (data: player1out) => player2out = (
     pizzasCount,
   } = data;
   let usedPizzaIds: number[] = [];
-  const teams: { [key: string]: number } = {
-    2: teamOf2Number,
-    3: teamOf3Number,
-    4: teamOf4Number,
-  };
 
   const result: player2out = { orders: [] };
-
-  const orders = [];
-  for (const [key, value] of Object.entries(teams)) {
-    for (let i = 1; i <= value; i++) {
-      orders.push(Number(key));
-    }
-  }
+  const NEW_INGREDIENTS_THRESHOLD = 0.8;
+  const orders = [
+    ...new Array(teamOf4Number).fill(4),
+    ...new Array(teamOf3Number).fill(3),
+    ...new Array(teamOf2Number).fill(2),
+  ];
 
   for (let ordersCount of orders) {
-    // for each order * optimise by reverting orders
+    // for each order
     const pizzaIds: number[] = [];
-    const pizzaIngredientsUsed: string[] = [];
+    let pizzaIngredientsUsed: { [key: string]: boolean } = {};
     if (ordersCount <= pizzasCount - usedPizzaIds.length) {
-      for (let user = 1; user <= ordersCount; user++) {
+      for (let user = ordersCount; user > 0; user--) {
         let userHasHisPizza = false;
         // Get pizza for each user
         for (const pizza of pizzas) {
@@ -77,12 +71,19 @@ export const function2: (data: player1out) => player2out = (
           if (usedPizzaIds.includes(pizza.id)) {
             continue;
           }
-          const uniqueIngridient = pizza.ingredients.find(
-            // * we can try filter by more ingridients
-            (ingredient) => !pizzaIngredientsUsed.includes(ingredient)
-          );
-          if (uniqueIngridient && !userHasHisPizza) {
-            pizzaIngredientsUsed.push(...pizza.ingredients);
+
+          if (
+            getIfIngredientsDoNotMatch(
+              pizza.ingredients,
+              pizzaIngredientsUsed,
+              NEW_INGREDIENTS_THRESHOLD
+            ) &&
+            !userHasHisPizza
+          ) {
+            pizzaIngredientsUsed = addIngridientsUsed(
+              pizza.ingredients,
+              pizzaIngredientsUsed
+            );
             userHasHisPizza = true;
             usedPizzaIds.push(pizza.id);
             pizzaIds.push(pizza.id);
@@ -91,7 +92,10 @@ export const function2: (data: player1out) => player2out = (
             !userHasHisPizza &&
             pizzasCount - usedPizzaIds.length <= ordersCount
           ) {
-            pizzaIngredientsUsed.push(...pizza.ingredients);
+            pizzaIngredientsUsed = addIngridientsUsed(
+              pizza.ingredients,
+              pizzaIngredientsUsed
+            );
             userHasHisPizza = true;
             usedPizzaIds.push(pizza.id);
             pizzaIds.push(pizza.id);
@@ -108,22 +112,35 @@ export const function2: (data: player1out) => player2out = (
       usedPizzaIds = usedPizzaIds.filter((id) => !pizzaIds.includes(id));
     }
   }
-
   return result;
 };
 
-// const mockData: player1out = {
-//   teamOf2Number: 1,
-//   teamOf3Number: 2,
-//   teamOf4Number: 1,
-//   pizzas: [
-//     { id: 0, ingredients: ["onion", "pepper", "olive"] },
-//     { id: 1, ingredients: ["mushroom", "tomato", "basil"] },
-//     { id: 2, ingredients: ["chicken", "mushroom", "pepper"] },
-//     { id: 3, ingredients: ["tomato", "mushroom", "basil"] },
-//     { id: 4, ingredients: ["chicken", "basil"] },
-//   ],
-//   pizzasCount: 5,
-// };
+const addIngridientsUsed = (
+  ingredients: string[],
+  obj: { [key: string]: boolean }
+) => {
+  for (let j = 0; j < ingredients.length; j++) {
+    obj[ingredients[j]] = true;
+  }
+  return obj;
+};
 
-// function2(mockData);
+const getIfIngredientsDoNotMatch = (
+  ingredients: string[],
+  pizzaIngredientsUsed: { [key: string]: boolean },
+  neededNewIngredientsThreshold: number = 0
+): any => {
+  const ingredentsTotal: number = ingredients.length;
+  let newIngredients: number = 0;
+  for (let i = 0; i < ingredients.length; i++) {
+    if (pizzaIngredientsUsed[ingredients[i]]) {
+      continue;
+    } else {
+      newIngredients++;
+      const shareOfNewIngredients = newIngredients / ingredentsTotal;
+      if (shareOfNewIngredients >= neededNewIngredientsThreshold) {
+        return true;
+      }
+    }
+  }
+};
