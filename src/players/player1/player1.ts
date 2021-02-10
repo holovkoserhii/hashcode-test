@@ -85,6 +85,7 @@ export const function1: (inputString: string) => player1out = (inputString: stri
       ingredients
     })
   )
+  pizzas.shift()
   const result = {
     pizzasCount: Number(splittedString[0][0]),
     teamOf2Number: Number(splittedString[0][1]),
@@ -92,35 +93,19 @@ export const function1: (inputString: string) => player1out = (inputString: stri
     teamOf4Number: Number(splittedString[0][3]),
     pizzas
   }
-// writeToFile(omposeFinalString(function2(result)), 'player2Result')
+
+writeToFile(composeFinalString(function2(result)), 'player2Result')
 // writeToFile(omposeFinalString(function3(result)), 'player3Result')
-  // console.log('player2 points: ', calculatePoints(function2(result)), result));
+  console.log('player2 points: ', calculatePoints(function2(result), result));
   // console.log('player3 points: ', calculatePoints(function3(result)), result));
   return result
 };
 
 
-
-const mockedData = {
-  orders: [
-    {
-      teamOf: 2,
-      pizzaIds: [1, 4]
-    },
-    {
-      teamOf: 3,
-      pizzaIds: [0, 2, 3]
-    },
-  ],
-}
-
 const composeFinalString: (data: player2out) => string = (data) => {
   let result = `${data.orders.length}\n`
-  console.log(result);
   data.orders.forEach((element) => {
     result += `${element.teamOf} ${element.pizzaIds.join(' ')}\n`
   })
   return result
 }
-
-writeToFile(composeFinalString(mockedData), '1')
